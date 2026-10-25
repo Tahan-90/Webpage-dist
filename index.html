@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0a14" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3 21 21H3z' fill='%234af0c0'/%3E%3C/svg%3E" />
+<title>Neon Dash</title>
+<link rel="manifest" href="./manifest.webmanifest" />
+  <script type="module" crossorigin src="./assets/index-Dn08K2JQ.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-8SGFup_C.css">
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <div id="hud">
+    <div id="score">0</div>
+    <div id="best-line">Best 0</div>
+    <div id="level-line">Neon Grid</div>
+  </div>
+  <button id="pause-btn" aria-label="Pause game">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>
+    </svg>
+  </button>
+  <button id="rocket-btn" aria-label="Launch rocket" title="Manual rocket">
+    <span aria-hidden="true">➤</span><b id="rocket-ammo">3</b>
+  </button>
+  <button id="mute-btn" aria-label="Mute sound">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/>
+    </svg>
+  </button>
+
+  <div id="powerups">
+    <div class="pchip" id="chip-shield">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8fd3ff" stroke-width="2.4" stroke-linejoin="round"><path d="M12 2 20 6v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/></svg>
+      SHIELD <b id="shield-hits">1 HIT</b>
+    </div>
+    <div class="pchip" id="chip-magnet">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ff8fd0" stroke-width="2.4" stroke-linecap="round"><path d="M6 4v8a6 6 0 0 0 12 0V4"/><path d="M6 4h4v4H6zM14 4h4v4h-4z" fill="#ff8fd0" stroke="none"/></svg>
+      MAGNET <b id="magnet-t">6s</b>
+    </div>
+    <div class="pchip" id="chip-slow">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c7a9ff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12M6 21h12M7 3c0 8 10 10 10 18M17 3c0 8-10 10-10 18"/></svg>
+      SLOW <b id="slow-t">6s</b>
+    </div>
+    <div class="pchip" id="chip-laser">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ff8f5c" stroke-width="2.4" stroke-linejoin="round"><path d="M13 2 5 14h6l-1 8 8-12h-6z"/></svg>
+      LASER <b>READY</b>
+    </div>
+  </div>
+  <div id="comboline">
+    <div class="pchip" id="chip-combo">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffcc55" stroke-width="2.4" stroke-linejoin="round"><path d="M13 2 5 14h6l-1 8 8-12h-6z"/></svg>
+      COMBO <b id="combo-v">0 · x1</b>
+    </div>
+  </div>
+
+  <div id="level-banner">
+    <div class="banner-eyebrow" id="banner-eyebrow">Level 2</div>
+    <div class="banner-name" id="banner-name">Sunset Circuit</div>
+  </div>
+
+  <div id="start-screen" class="overlay">
+    <div class="home-topline">
+      <span class="eyebrow">NEON DASH · STARFRONT</span>
+      <div class="home-actions">
+        <button id="gembank-line" aria-label="Gem balance"></button>
+        <button id="profile-btn" class="icon-action" aria-label="Open pilot profile">◉</button>
+        <button id="home-rewards-btn" class="icon-action" aria-label="Open rewards">✦</button>
+      </div>
+    </div>
+    <h1 class="game-title">NEON DASH</h1>
+    <div class="hero-ship"><img id="home-ship" src="./assets/ships/dart.svg" alt="Dart fighter jet preview" /><span id="home-ship-name">DART · INTERCEPTOR</span><small id="home-ship-ability">Balanced handling</small></div>
+    <div id="vehicle-row" role="group" aria-label="Choose your fighter"></div>
+    <div id="bestcombo-line">Best combo: 0</div>
+    <div class="mode-picker" role="group" aria-label="Choose run mode">
+      <button class="mode-choice selected" data-mode="classic" aria-pressed="true">CLASSIC</button>
+      <button class="mode-choice" data-mode="sprint" aria-pressed="false">SPRINT</button>
+      <button class="mode-choice" data-mode="zen" aria-pressed="false">ZEN</button>
+    </div>
+    <div id="mode-description">Endless arcade run. How long can you last?</div>
+    <button id="play-btn" class="btn home-play">START FLIGHT</button>
+    <nav class="home-nav" aria-label="Game pages">
+      <button id="market-btn" class="hub-link"><span>◈</span>Market</button>
+      <button id="rewards-btn" class="hub-link"><span>✦</span>Rewards</button>
+      <button id="guide-btn" class="hub-link"><span>ⓘ</span>Flight guide</button>
+    </nav>
+  </div>
+
+  <div id="profile-screen" class="overlay hidden">
+    <div class="page-heading"><button class="back-button" data-home aria-label="Back to hangar">‹</button><div><span class="eyebrow">PILOT RECORD</span><h2 class="pause-title">MY HANGAR</h2></div><span class="page-heading-spacer"></span></div>
+    <div class="page-scroll">
+      <section class="profile-card"><h3>FIGHTER FLEET</h3><div id="profile-fighters"></div></section>
+      <section class="profile-card"><h3>OWNED TECHNOLOGY</h3><div id="profile-technology"></div></section>
+      <section class="profile-card"><h3>SKINS</h3><div id="profile-skins"></div></section>
+      <section class="profile-card"><h3>POWER-UP UPGRADES</h3><div id="profile-powerups"></div></section>
+    </div>
+  </div>
+
+  <div id="market-screen" class="overlay hidden">
+    <div class="page-heading"><button class="back-button" data-home aria-label="Back to hangar">‹</button><div><span class="eyebrow">PILOT SUPPLY</span><h2 class="pause-title market-title">MARKET</h2></div><div id="market-bank"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffcc55" stroke-width="2.2" stroke-linejoin="round"><path d="M12 2l8 7-8 13L4 9z"/></svg><b id="market-bank-n">0</b></div></div>
+    <div id="market-tabs" role="tablist" aria-label="Market category"></div>
+    <div id="market-list"></div>
+  </div>
+
+  <div id="rewards-screen" class="overlay hidden">
+    <div class="page-heading"><button class="back-button" data-home aria-label="Back to hangar">‹</button><div><span class="eyebrow">FLIGHT RECORDS</span><h2 class="pause-title">REWARDS</h2></div><span class="page-heading-spacer"></span></div>
+    <div class="page-scroll">
+      <div class="rewards-card"><h3>DAILY CHALLENGE</h3><div id="daily-challenge"></div></div>
+      <div class="rewards-card"><h3>ACHIEVEMENTS</h3><div id="achievement-list"></div></div>
+      <div class="rewards-card"><h3>PERSONAL BESTS</h3><div id="mode-records"></div></div>
+    </div>
+  </div>
+
+  <div id="guide-screen" class="overlay hidden">
+    <div class="page-heading"><button class="back-button" data-home aria-label="Back to hangar">‹</button><div><span class="eyebrow">FLIGHT SCHOOL</span><h2 class="pause-title">FIELD GUIDE</h2></div><span class="page-heading-spacer"></span></div>
+    <div class="page-scroll guide-scroll">
+      <section class="guide-card"><h3>FLIGHT CONTROLS</h3><p>Tap the left or right half of the screen to change lanes. On a keyboard, use ← / → or A / D. Tap the pause icon or press P to pause. Titans can launch a rocket with the button beside the lower-left thumb area; on a keyboard press F.</p></section>
+      <section class="guide-card"><h3>MISSION OBJECTIVES</h3><p>Avoid incoming red hazards. Collect crystals to score, grow your combo, and bank gems after each run. Collected power-ups activate automatically. Complete daily challenges and achievements, then claim their rewards from the Rewards page.</p></section>
+      <section class="guide-card"><h3>POWER-UP SYSTEMS</h3>
+        <div class="guide-power"><span class="power-symbol shield">⬡</span><span><strong>Shield</strong><small>Absorbs one collision (two with Shield 2.0).</small></span></div>
+        <div class="guide-power"><span class="power-symbol magnet">⌁</span><span><strong>Magnet</strong><small>Pulls nearby gems toward your fighter.</small></span></div>
+        <div class="guide-power"><span class="power-symbol slow">◷</span><span><strong>Slow time</strong><small>Slows hazards for a short time.</small></span></div>
+        <div class="guide-power"><span class="power-symbol laser">ϟ</span><span><strong>Laser</strong><small>Automatically fires at the next hazard ahead. Twin Laser targets two hazards.</small></span></div>
+        <div class="guide-power"><span class="power-symbol rocket">➤</span><span><strong>Titan rockets</strong><small>Manually destroy the nearest block ahead. Rockets are limited per flight; Guided Rack adds extra ammunition.</small></span></div>
+      </section>
+      <section class="guide-card"><h3>FIGHTER ABILITIES</h3><p>Dart is balanced. Ghost unlocks at combo x10 (27 consecutive gems) and has a smaller hitbox, faster lane changes, and a 280–1,200 speed range. Titan unlocks at combo x15 (42 consecutive gems), starts shielded, and runs from 100–750 speed with manual rockets. Market fighters have their own passive abilities.</p></section>
+      <section class="guide-card"><h3>HANGAR & REWARDS</h3><p>Use My Hangar to review your fighters, skins, technologies, and power-up upgrades. A glowing Rewards button means one or more rewards are ready to claim.</p></section>
+      <section class="guide-card"><h3>RUN MODES</h3><p><strong>Classic</strong> is an endless survival run. <strong>Sprint</strong> challenges you to survive 60 seconds. <strong>Zen</strong> removes hazards so you can fly and collect in peace.</p></section>
+    </div>
+  </div>
+
+  <div id="gameover-screen" class="overlay hidden">
+    <div class="eyebrow" id="run-result-label" style="color: var(--color-danger)">Crashed</div>
+    <div class="score-final" id="final-score">0</div>
+    <div class="score-sub" id="final-best">Best 0</div>
+    <div class="score-sub" id="final-level">Neon Grid</div>
+    <div class="new-best" id="new-best">New Best</div>
+    <div id="run-stats">
+      <div><span>Gems</span><b id="stat-gems">0</b></div>
+      <div><span>Best combo</span><b id="stat-combo">0</b></div>
+      <div><span>Near misses</span><b id="stat-nm">0</b></div>
+      <div><span>Lasers fired</span><b id="stat-laser">0</b></div>
+      <div><span>Rockets fired</span><b id="stat-rocket">0</b></div>
+    </div>
+    <div id="unlock-notice" class="hidden">Vehicle unlocked</div>
+    <div id="gems-banked" class="hidden"></div>
+    <div id="goal-result" class="score-sub"></div>
+    <div class="btn-row">
+      <button id="restart-btn" class="btn">Play Again</button>
+      <button id="change-vehicle-btn" class="btn btn-ghost">Home</button>
+    </div>
+  </div>
+
+  <div id="pause-screen" class="overlay hidden">
+    <div class="eyebrow">Game Paused</div>
+    <h2 class="pause-title">PAUSED</h2>
+    <div class="btn-row">
+      <button id="resume-btn" class="btn">Resume</button>
+      <button id="pause-restart-btn" class="btn btn-ghost">Restart</button>
+      <button id="pause-vehicle-btn" class="btn btn-ghost">Home</button>
+    </div>
+  </div>
+
+  <div id="debug">FPS:--</div>
+
